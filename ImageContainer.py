@@ -1,6 +1,7 @@
 import imageio
 from Image import Image
 
+#container for all our image objects
 class ImageContainer:
     images = []
 

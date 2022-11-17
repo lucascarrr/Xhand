@@ -3,7 +3,6 @@ import cv2 as cv
 import numpy as np
 
 #this class contains the methods for processing an image object
-
 class ImageProcessor:
     
     def applyProcessing(self, ImageObject):
@@ -13,7 +12,6 @@ class ImageProcessor:
         output_image = ImageProcessor.cleanImage(output_image)
         output_image = ImageProcessor.ccAnalysis(output_image)
         output_image = ImageProcessor.findContours(output_image)
-
         return output_image
 
     def histogramNormalization(ImageObject):
@@ -22,10 +20,8 @@ class ImageProcessor:
         return image
    
     def getWindowAverage(i, j, ImageObject):
-        
-        # Get width of image
         image_width = ImageObject.shape[1]
-        sum         = 0
+        sum = 0
 
         if j < (image_width // 2):
             for a in range(2):
@@ -35,17 +31,12 @@ class ImageProcessor:
             for a in range(2):
                 for b in range(3):
                     sum += ImageObject[i - b][j - a]
-
-        # Returns 255, indicating white
         if sum / 6 > 130:
             return 255
-
-        # Returns 0, indicating black
         return 0
 
+    #This method (and getWindowAverage) is required to close-off the hand from the edges of the image (sometimes the thresholding can bleed a little bit)
     def cleanImage(ImageObject):
-
-        # Find image height and width
         image_height  = ImageObject.shape[0]
         image_width   = ImageObject.shape[1]
 
@@ -57,7 +48,7 @@ class ImageProcessor:
         return ImageObject       
 
         
-
+    #The excessive amount of alterations seem to help deal with cases of low contrast, while not breaking images with normal contrast levels
     def thresholding(ImageObject):
         kernel = np.ones((5,5),np.uint8)
         dilation = cv.dilate(ImageObject,kernel,iterations = 5)
@@ -72,9 +63,8 @@ class ImageProcessor:
         
         return closing
 
-
+    #Connected Component Analysis
     def ccAnalysis(ImageObject):
-        
         max         = []
         id          = 0
         analysis    = cv.connectedComponentsWithStats(ImageObject, 4, cv.CV_32S)
@@ -95,7 +85,6 @@ class ImageProcessor:
         return cc_analized_image
 
     def findContours(threshed_image):
-
         # Stores the concaves between fingers
         concave_points  = []
         start_points    = []

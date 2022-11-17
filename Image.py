@@ -1,7 +1,7 @@
 import numpy as np
 from ImageProcessor import ImageProcessor
 
-
+#stores data associated with an image 
 class Image:
     filename        = ""
     rotation_factor = 0
