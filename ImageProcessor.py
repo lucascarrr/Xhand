@@ -10,8 +10,9 @@ class ImageProcessor:
         output_image = ImageObject
         output_image = ImageProcessor.histogramNormalization(output_image)
         output_image = ImageProcessor.thresholding(output_image)
+        output_image = ImageProcessor.cleanImage(output_image)
         output_image = ImageProcessor.ccAnalysis(output_image)
-        output_image = ImageProcessor.findContours(self, output_image)
+        output_image = ImageProcessor.findContours(output_image)
 
         return output_image
 
@@ -20,13 +21,40 @@ class ImageProcessor:
         image = cv.medianBlur(image, 5)
         return image
    
-    def removeSegment(ImageObject):
-        width = ImageObject.shape[1]
-        height = ImageObject.shape[0]
+    def getWindowAverage(i, j, ImageObject):
         
-        start_y = height - 200
-        for x in range (start_y, height):
-            
+        # Get width of image
+        image_width = ImageObject.shape[1]
+        sum         = 0
+
+        if j < (image_width // 2):
+            for a in range(2):
+                for b in range(3):
+                    sum += ImageObject[i - b][j + a]
+        else:
+            for a in range(2):
+                for b in range(3):
+                    sum += ImageObject[i - b][j - a]
+
+        # Returns 255, indicating white
+        if sum / 6 > 130:
+            return 255
+
+        # Returns 0, indicating black
+        return 0
+
+    def cleanImage(ImageObject):
+
+        # Find image height and width
+        image_height  = ImageObject.shape[0]
+        image_width   = ImageObject.shape[1]
+
+        # Create an image with the pixels averaged using getWindowAverage
+        for i in range(image_height - round(image_height * 0.1), image_height):
+            for j in range(image_width):
+                ImageObject[i][j] = ImageProcessor.getWindowAverage(i, j, ImageObject)
+
+        return ImageObject       
 
         
 
@@ -66,7 +94,7 @@ class ImageProcessor:
         cc_analized_image  = cv.bitwise_or(output, componentMask)  
         return cc_analized_image
 
-    def findContours(self, threshed_image):
+    def findContours(threshed_image):
 
         # Stores the concaves between fingers
         concave_points  = []
