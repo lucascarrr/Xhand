@@ -11,7 +11,7 @@ from Image import Image
 def helper(path, holder):
     for filename in os.listdir(path):
         if (filename.endswith(".png")):
-            source_img  = np.array(cv.imread(os.path.join(path, filename)))
+            source_img  = np.array(cv.imread(os.path.join(path, filename), cv.IMREAD_GRAYSCALE))
             holder.addImage(Image(source_img, filename))
 
 def main():
